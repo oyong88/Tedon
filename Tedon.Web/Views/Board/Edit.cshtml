@@ -1,0 +1,137 @@
+﻿@model Board
+@{
+    ViewData["Title"] = "Edit";
+}
+@section scripts{
+    <script type="text/javascript">
+
+        $(function () {
+
+            var isSaving = false;
+
+            //저장 버튼 클릭
+            $('#btnSave').click(function () {
+
+                var idx = $('#txtIdx').val();
+                var title = $('#txtTitle').val();
+                var body = $('#txtBody').val();
+
+                //validation..
+                if ($.trim(title) == '') {
+                    alert('제목을 입력해 주십시오.');
+                    $('#txtTitle').focus();
+                    return false;
+                }
+
+                if ($.trim(body) == '') {
+                    alert('내용을 입력해 주십시오.');
+                    $('#txtBody').focus();
+                    return false;
+                }
+
+                if (!isSaving) {
+                    isSaving = true;
+
+                    $.ajax({
+                        type: "POST",
+                        url: "/Board/Edit",
+                        data: {
+                            idx: idx,
+                            title: title,
+                            body: body
+                        },
+                        success: function (data) {
+
+                            isSaving = false;
+
+                            if (data.code == 0) {
+                                alert("수정하였습니다.");
+                                location.href = "/Board";
+                            } else {
+                                alert(data.message);
+                                return;
+                            }
+                        },
+                        error: function (e) {
+                            isSaving = false;
+                            alert(e.responseText);
+                        }  
+                    });
+                }
+                
+            });
+
+            //삭제 버튼 클릭
+            $('#btnDelete').click(function () {
+
+                if (!confirm('삭제하시겠습니까?')) {
+                    return false;
+                }
+
+                var idx = $('#txtIdx').val();
+
+                if (!isSaving) {
+                    isSaving = true;
+
+                    $.ajax({
+                        type: "POST",
+                        url: "/Board/Delete/" + idx,
+                        data: {
+
+                        },
+                        success: function (data) {
+
+                            isSaving = false;
+
+                            if (data.code == 0) {
+                                alert("삭제하였습니다.");
+                                location.href = "/Board";
+                            } else {
+                                alert(data.message);
+                                return;
+                            }
+                        },
+                        error: function (e) {
+                            isSaving = false;
+                            alert(e.responseText);
+                        }
+                    });
+                }
+
+            });
+
+        });
+       
+
+    </script>
+}
+
+<h2>글편집</h2>
+
+<div>
+    <form class="form-horizontal">
+
+        <div class="form-group">
+            <label for="txtTitle" class="col-md-2 control-label">제목</label>
+            <div class="col-md-9">
+                <input type="text" class="form-control" id="txtTitle" value="@(Model.Title)" maxlength="50" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="txtBody" class="col-md-2 control-label">내용</label>
+            <div class="col-md-9">
+                <textarea class="form-control" id="txtBody" rows="10"  maxlength="500">@(Model.Body)</textarea>
+            </div>
+        </div>
+
+        <input type="hidden" value="@(Model.Idx)" id="txtIdx" />
+    </form>
+</div>
+
+<div class="pull-right">
+    <a class="btn btn-default" href="/Board">목록</a>
+    <a id="btnDelete" class="btn btn-danger">삭제</a>
+    <a id="btnSave" class="btn btn-primary">저장</a>
+</div>
+

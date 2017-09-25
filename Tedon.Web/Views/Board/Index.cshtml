@@ -1,0 +1,30 @@
+﻿@model List<Board>
+@{
+    ViewData["Title"] = "Index";
+}
+
+
+<h2>게시물</h2>
+
+<div>
+    <table class="table">
+        <tr>
+            <th style="width:10%">No.</th>
+            <th style="width:60%">제목</th>
+            <th style="width:30%">등록일</th>
+        </tr>
+        @foreach (Board board in Model)
+        {
+            <tr>
+                <td>@board.Idx</td>
+                <td><a href="/Board/Edit/@board.Idx">@board.Title</a></td>
+                <td>@board.RegDt.ToString("yyyy-MM-dd HH:mm")</td>
+            </tr>
+        }
+    </table>
+</div>
+
+<div class="pull-right">
+    <a id="btnWrite" class="btn btn-primary" href="@Url.Action("Write")">글쓰기</a>
+</div>
+

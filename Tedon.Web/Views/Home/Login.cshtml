@@ -1,0 +1,76 @@
+﻿
+@{
+    ViewData["Title"] = "Login";
+}
+
+@section scripts{
+    <script type="text/javascript">
+
+        var isLogin = false;
+
+        $('#login').submit(function () {
+
+            var id = $('#txtID').val();
+            var pwd = $('#txtPwd').val();
+
+            if (id.trim() == '') {
+                alert('ID를 입력해 주십시오.');
+                return false;
+            }
+
+            if (pwd.trim() == '') {
+                alert('Password를 입력해 주십시오.');
+                return false;
+            }
+
+            if (!isLogin) {
+                isLogin = true;
+
+                $.ajax({
+                    type: "POST",
+                    url: "/Home/Login",
+                    data: {
+                        id: id,
+                        pwd: pwd
+                    },
+                    success: function (data) {
+
+                        isLogin = false;
+
+                        if (data.code == 0) {
+                            location.href = "/";
+                        } else {
+                            alert(data.message);
+                            return;
+                        }
+                    },
+                    error: function (e) {
+                        isLogin = false;
+                        alert(e.responseText);
+                    }
+                });
+            }
+
+            return false;
+
+        });
+
+    </script>
+}
+<div class="container">
+
+    <form class="form-signin" id="login">
+
+        <!--ID-->
+        <label for="txtID" class="sr-only">아이디</label>
+        <input type="text" id="txtID" class="form-control" placeholder="아이디">
+
+        <!--PWD-->
+        <label for="txtPwd" class="sr-only">패스워드</label>
+        <input type="password" id="txtPwd" class="form-control" placeholder="패스워드">
+
+        <button class="btn btn-lg btn-primary btn-block" type="submit">로그인</button>
+    </form>
+
+</div>
+
